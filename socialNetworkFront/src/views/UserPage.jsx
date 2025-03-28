@@ -10,24 +10,10 @@ export default function UserPage(){
     const { userSession } = useUserSession();
     const [objectUser, setObjectUser] = useState({id:'', name:'', lastName:'',dateBirth:'', eMail:'', username:''});
 
+    const token = localStorage.getItem("authToken");
+
     useEffect(() => {
-        if(userSession.id!=0){
-            const fetchData = async () => {
-                try {                
-                    const response = await fetch(API_BASE_URL + "/socialnetwork/usuario/" + userSession.id, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-                    const data = await response.json()
-                    setObjectUser(data);   
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-            };
-            fetchData();
-        }
+        setObjectUser(userSession);
     }, [userSession.id]);
 
 

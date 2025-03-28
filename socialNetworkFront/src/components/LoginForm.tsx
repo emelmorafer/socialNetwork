@@ -2,6 +2,7 @@ import React, {useState, useEffect, ChangeEvent, FormEvent} from 'react';
 import { API_BASE_URL } from '../config/config';
 import { useNavigate } from 'react-router-dom';
 import { useUserSession } from '../context/UserSessionContext';
+import { jwtDecode } from "jwt-decode";
 
 
 function LoginForm(){
@@ -23,9 +24,7 @@ function LoginForm(){
         }
 
         try {
-            const url = `${API_BASE_URL}/socialnetwork/usuario/login`;
-                            
-            const response = await fetch(url, {
+            const response = await fetch(API_BASE_URL + "/socialnetwork/usuario/login", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,9 +32,21 @@ function LoginForm(){
                 body: JSON.stringify({ username: usernameForm, password: passwordForm })
             });
         
-            if (response.ok) {      
-                const data = await response.json()                   
-                setUserSession(data); 
+            if (response.ok) {  
+                const token = await response.text();
+                localStorage.setItem('authToken', token);
+
+                const decodedToken = jwtDecode(token)
+
+                const responseUser = await fetch(API_BASE_URL + "/socialnetwork/usuario/username/" + decodedToken.sub, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                });
+                const data = await responseUser.json()
+                setUserSession(data);  
 
                 navigate('/adminuser');
             } else {

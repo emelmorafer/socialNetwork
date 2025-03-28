@@ -1,5 +1,6 @@
 package com.example.socialNetwork.controller;
 
+import com.example.socialNetwork.configuration.TokenService;
 import com.example.socialNetwork.dto.UserDto;
 import com.example.socialNetwork.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,8 @@ public class UserController {
         UserDto userDto = userService.getUserByUsername(username);
         if (userDto != null) {
             if (password.equals(userDto.getPassword())) {
-                return ResponseEntity.ok(userDto);
+                //return ResponseEntity.ok(userDto);
+                return ResponseEntity.ok(TokenService.generarToken(username));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Contraseña incorrecta.");
             }

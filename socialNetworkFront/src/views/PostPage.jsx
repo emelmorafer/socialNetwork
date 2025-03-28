@@ -11,11 +11,19 @@ export default function PostPage(){
     const [listPosts, setListPosts] = useState([]);
     const [updateListPosts, setUpdateListPosts] = useState(true);
 
+    const token = localStorage.getItem("authToken");
+
     useEffect(() => {
         if(updateListPosts){
             const fetchData = async () => {
                 try {
-                    const response = await fetch(API_BASE_URL + "/socialnetwork/publicacion/listbynotuser/" + userSession.id);
+                    const response = await fetch(API_BASE_URL + "/socialnetwork/publicacion/listbynotuser/" + userSession.id, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                    });
                     const data = await response.json();
                     setListPosts(data);
                 } catch (error) {
@@ -42,6 +50,7 @@ export default function PostPage(){
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
                         },
                     });
                     const data = await responseGet.json()                   
@@ -59,6 +68,7 @@ export default function PostPage(){
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
                         },
                     });
 
